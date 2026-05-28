@@ -444,7 +444,7 @@ const EQUIP_SPEC=[
   ["name","기물명","기물명",0],["cat","분류","분류 (잔/접시/커트러리/기타)",0],
   ["status","현재상태","현재 상태 (사용중/미사용중/단종/예비/검토중)",0],
   ["photo","사진URL","사진 URL",0],["intro","한줄소개","한줄 소개",1],
-  ["cap","용량","용량",0],["mat","재질","재질",0],
+  ["cap","사이즈","사이즈 (잔=ml / 접시·커트러리=cm)",0],["mat","재질","재질",0],
   ["use","사용처","사용처 (한 줄에 하나) — 잔=사용 음료 / 커트러리·접시=사용 베이커리",1],
   ["brand","브랜드","브랜드 (예: ANCAP)",0],["vendor","구매처","구매처 (예: 쿠팡, 본사)",0],
   ["priceUnit","개당단가","개당 단가 (예: 5,000원)",0],["priceSet","세트단가","세트 단가",0],
@@ -838,7 +838,7 @@ function fromEquip(o){
   return { name:(o["기물명"]||"").trim(), cat:(o["분류"]||"").trim(),
     status:(o["현재상태"]||"").trim(),
     photo:(o["사진URL"]||"").trim(), intro:(o["한줄소개"]||"").trim(),
-    cap:(o["용량"]||"").trim(), mat:(o["재질"]||"").trim(),
+    cap:(o["사이즈"]||o["용량"]||"").trim(), mat:(o["재질"]||"").trim(),
     use:(o["사용처"]||"").trim(),
     brand:(o["브랜드"]||"").trim(), vendor:(o["구매처"]||"").trim(),
     priceUnit:(o["개당단가"]||"").trim(), priceSet:(o["세트단가"]||"").trim(),
@@ -850,7 +850,7 @@ function fromEquip(o){
 function toEquip(e){
   return { "기물명":e.name||"", "분류":e.cat||"", "현재상태":e.status||"",
     "사진URL":e.photo||"", "한줄소개":e.intro||"",
-    "용량":e.cap||"", "재질":e.mat||"", "사용처":e.use||"",
+    "사이즈":e.cap||"", "재질":e.mat||"", "사용처":e.use||"",
     "브랜드":e.brand||"", "구매처":e.vendor||"",
     "개당단가":e.priceUnit||"", "세트단가":e.priceSet||"",
     "마지막구매일":e.lastBuy||"", "구매이력":e.buyLog||"",
@@ -925,7 +925,11 @@ function renderEquipPage(e){
     h+='<div style="margin-bottom:14px;padding:36px;background:var(--soft);border:1px dashed var(--line);border-radius:8px;text-align:center;color:#9ca3af;font-size:13px;cursor:pointer" onclick="uploadToEquipCard()" title="클릭해 사진 업로드">사진 미등록 \u2014 클릭해 사진 업로드</div>';
   }
   // 메타 그리드 (분류/용량/재질/브랜드)
-  const tr=[["분류",e.cat],["용량",e.cap],["재질",e.mat],["브랜드",e.brand]].filter(function(x){return x[1];});
+  // 사이즈 라벨 분류별 (잔=ml / 접시·커트러리=cm)
+  const sizeLabel = e.cat==="잔" ? "사이즈 (ml)"
+                  : (e.cat==="접시"||e.cat==="커트러리") ? "사이즈 (cm)"
+                  : "사이즈";
+  const tr=[["분류",e.cat],[sizeLabel,e.cap],["재질",e.mat],["브랜드",e.brand]].filter(function(x){return x[1];});
   if(tr.length){
     h+='<div class="meta-grid" style="grid-template-columns:repeat('+tr.length+',1fr)">';
     tr.forEach(function(x){ h+='<div class="meta-cell"><div class="k">'+x[0]+'</div><div class="v">'+esc(x[1])+'</div></div>'; });
