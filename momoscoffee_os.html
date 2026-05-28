@@ -441,20 +441,27 @@ const BEAN_SPEC=[
   ["philosophy","감각철학","감각 철학 (✕/✓ 한 줄에 하나)",1]
 ];
 const EQUIP_SPEC=[
-  ["name","기물명","기물명",0],["cat","분류","분류 (잔/커트러리/디저트도구/받침·트레이/기타)",0],
+  ["name","기물명","기물명",0],["cat","분류","분류 (잔/접시/커트러리/기타)",0],
+  ["status","현재상태","현재 상태 (사용중/미사용중/단종/예비/검토중)",0],
   ["photo","사진URL","사진 URL",0],["intro","한줄소개","한줄 소개",1],
   ["cap","용량","용량",0],["mat","재질","재질",0],
-  ["use","사용처","사용처 (한 줄에 하나)",1],
+  ["use","사용처","사용처 (한 줄에 하나) — 잔=사용 음료 / 커트러리·접시=사용 베이커리",1],
+  ["brand","브랜드","브랜드 (예: ANCAP)",0],["vendor","구매처","구매처 (예: 쿠팡, 본사)",0],
+  ["priceUnit","개당단가","개당 단가 (예: 5,000원)",0],["priceSet","세트단가","세트 단가",0],
+  ["lastBuy","마지막구매일","마지막 구매일 (YYYY-MM-DD)",0],
+  ["buyLog","구매이력","구매 이력 — 한 줄에 한 건 · 날짜 | 구매처 | 수량 | 금액",1],
+  ["stockOk","적정수량","적정 보유 수량",0],["stockMin","최소수량","최소 보유 수량 (이하면 발주)",0],
   ["store","보관법","보관법",1],["wash","세척법","세척법",1],
+  ["caution","주의사항","사용 시 주의사항 (한 줄에 하나)",1],
   ["memo","비고","비고",0]
 ];
 const EQUIP_LIB=[
-  {name:"안캄 베로나 에스프레소 잔",cat:"잔",photo:"",intro:"두꺼운 벽으로 온도 유지가 좋은 클래식 에스프레소 잔",cap:"80ml",mat:"자기",use:"에스프레소\n리스트레토",store:"매일 닦아 카운터 보관",wash:"중성세제 + 손세척 권장",memo:"본점·마린시티 보유"},
-  {name:"안캄 레알레 커피잔",cat:"잔",photo:"",intro:"컵+소서 세트의 표준 커피잔",cap:"120ml",mat:"자기",use:"아메리카노\n드립커피",store:"잔·소서 분리 보관",wash:"일반 세척",memo:"본점 보유"},
-  {name:"라떼잔",cat:"잔",photo:"",intro:"우유 음료용 폭이 넓은 잔",cap:"240ml",mat:"자기",use:"라떼\n카푸치노\n시그니처(HOT)",store:"손잡이 보호 적층 보관",wash:"우유 잔여물 즉시 세척",memo:"전 매장 사용"},
-  {name:"아이스 글라스",cat:"잔",photo:"",intro:"두꺼운 바닥의 ICE 음료용 잔",cap:"360ml",mat:"유리",use:"아이스 아메리카노\n아이스 라떼\n콜드브루",store:"깨짐 주의 별도 보관",wash:"식기세척기 가능",memo:"전 매장 사용"},
-  {name:"에스프레소 스푼",cat:"커트러리",photo:"",intro:"작은 사이즈 디저트·에스프레소용 스푼",cap:"-",mat:"스테인리스",use:"에스프레소\n시그니처",store:"별도 트레이 보관",wash:"일반 세척",memo:"전 매장 사용"},
-  {name:"커피 소서(받침)",cat:"접시",photo:"",intro:"컵 받침 접시",cap:"직경 14cm",mat:"자기",use:"아메리카노\n라떼\n커피류",store:"잔과 별도 보관",wash:"일반 세척",memo:"본점·마린시티 보유"}
+  {name:"안캄 베로나 에스프레소 잔",cat:"잔",status:"사용중",photo:"",intro:"두꺼운 벽으로 온도 유지가 좋은 클래식 에스프레소 잔",cap:"80ml",mat:"자기",use:"에스프레소\n리스트레토",brand:"ANCAP",vendor:"",priceUnit:"",priceSet:"",lastBuy:"",buyLog:"",stockOk:"20",stockMin:"10",store:"매일 닦아 카운터 보관",wash:"중성세제 + 손세척 권장",caution:"뜨거운 잔에 찬물 직접 닿지 않게",memo:"본점·마린시티 보유"},
+  {name:"안캄 레알레 커피잔",cat:"잔",status:"사용중",photo:"",intro:"컵+소서 세트의 표준 커피잔",cap:"120ml",mat:"자기",use:"아메리카노\n드립커피",brand:"ANCAP",vendor:"",priceUnit:"",priceSet:"",lastBuy:"",buyLog:"",stockOk:"15",stockMin:"8",store:"잔·소서 분리 보관",wash:"일반 세척",caution:"급격한 온도변화 주의",memo:"본점 보유"},
+  {name:"라떼잔",cat:"잔",status:"사용중",photo:"",intro:"우유 음료용 폭이 넓은 잔",cap:"240ml",mat:"자기",use:"라떼\n카푸치노\n시그니처(HOT)",brand:"",vendor:"",priceUnit:"",priceSet:"",lastBuy:"",buyLog:"",stockOk:"30",stockMin:"15",store:"손잡이 보호 적층 보관",wash:"우유 잔여물 즉시 세척",caution:"손잡이 부분 적층 시 부딪힘 주의",memo:"전 매장 사용"},
+  {name:"아이스 글라스",cat:"잔",status:"사용중",photo:"",intro:"두꺼운 바닥의 ICE 음료용 잔",cap:"360ml",mat:"유리",use:"아이스 아메리카노\n아이스 라떼\n콜드브루",brand:"",vendor:"",priceUnit:"",priceSet:"",lastBuy:"",buyLog:"",stockOk:"40",stockMin:"20",store:"깨짐 주의 별도 보관",wash:"식기세척기 가능",caution:"급격한 온도변화 시 깨질 수 있음 · 외부 반출 금지",memo:"전 매장 사용"},
+  {name:"에스프레소 스푼",cat:"커트러리",status:"사용중",photo:"",intro:"작은 사이즈 디저트·에스프레소용 스푼",cap:"-",mat:"스테인리스",use:"에스프레소\n시그니처\n티라미수",brand:"",vendor:"",priceUnit:"",priceSet:"",lastBuy:"",buyLog:"",stockOk:"30",stockMin:"15",store:"별도 트레이 보관",wash:"일반 세척",caution:"",memo:"전 매장 사용"},
+  {name:"커피 소서(받침)",cat:"접시",status:"사용중",photo:"",intro:"컵 받침 접시",cap:"직경 14cm",mat:"자기",use:"아메리카노\n라떼\n커피류",brand:"ANCAP",vendor:"",priceUnit:"",priceSet:"",lastBuy:"",buyLog:"",stockOk:"20",stockMin:"10",store:"잔과 별도 보관",wash:"일반 세척",caution:"적층 시 미끄럼 주의",memo:"본점·마린시티 보유"}
 ];
 function buildFallback(){
   const list=[Object.assign({},ESPRESSO)];
@@ -829,15 +836,27 @@ function toBean(b){
 }
 function fromEquip(o){
   return { name:(o["기물명"]||"").trim(), cat:(o["분류"]||"").trim(),
+    status:(o["현재상태"]||"").trim(),
     photo:(o["사진URL"]||"").trim(), intro:(o["한줄소개"]||"").trim(),
     cap:(o["용량"]||"").trim(), mat:(o["재질"]||"").trim(),
-    use:(o["사용처"]||"").trim(), store:(o["보관법"]||"").trim(),
-    wash:(o["세척법"]||"").trim(), memo:(o["비고"]||"").trim() };
+    use:(o["사용처"]||"").trim(),
+    brand:(o["브랜드"]||"").trim(), vendor:(o["구매처"]||"").trim(),
+    priceUnit:(o["개당단가"]||"").trim(), priceSet:(o["세트단가"]||"").trim(),
+    lastBuy:(o["마지막구매일"]||"").trim(), buyLog:(o["구매이력"]||"").trim(),
+    stockOk:(o["적정수량"]||"").trim(), stockMin:(o["최소수량"]||"").trim(),
+    store:(o["보관법"]||"").trim(), wash:(o["세척법"]||"").trim(),
+    caution:(o["주의사항"]||"").trim(), memo:(o["비고"]||"").trim() };
 }
 function toEquip(e){
-  return { "기물명":e.name||"", "분류":e.cat||"", "사진URL":e.photo||"", "한줄소개":e.intro||"",
+  return { "기물명":e.name||"", "분류":e.cat||"", "현재상태":e.status||"",
+    "사진URL":e.photo||"", "한줄소개":e.intro||"",
     "용량":e.cap||"", "재질":e.mat||"", "사용처":e.use||"",
-    "보관법":e.store||"", "세척법":e.wash||"", "비고":e.memo||"" };
+    "브랜드":e.brand||"", "구매처":e.vendor||"",
+    "개당단가":e.priceUnit||"", "세트단가":e.priceSet||"",
+    "마지막구매일":e.lastBuy||"", "구매이력":e.buyLog||"",
+    "적정수량":e.stockOk||"", "최소수량":e.stockMin||"",
+    "보관법":e.store||"", "세척법":e.wash||"",
+    "주의사항":e.caution||"", "비고":e.memo||"" };
 }
 function findEquip(name){
   name=(name||"").trim();
@@ -878,30 +897,70 @@ function renderEquipPage(e){
     return ((m.cup||"")+"\n"+(m.name||"")).toLowerCase().indexOf(tag)>=0;
   }).map(function(m){ return m.name; });
   const useLines=lines(e.use||"");
+  const useLabel = e.cat==="잔" ? "사용 음료"
+                : (e.cat==="커트러리"||e.cat==="접시") ? "사용 베이커리/디저트"
+                : "사용처";
+  // 현재상태 배지 색상
+  const statColor = {"사용중":"#059669","미사용중":"#9ca3af","단종":"#dc2626","예비":"#f59e0b","검토중":"#3b82f6"}[e.status] || "#6b7280";
+  const statBadge = e.status
+    ? '<span style="margin-left:10px;padding:3px 10px;background:'+statColor+';color:#fff;border-radius:14px;font-size:11.5px;font-weight:600">'+esc(e.status)+'</span>'
+    : '';
+  // 재고 경고
+  const sOk = parseInt(e.stockOk,10), sMin = parseInt(e.stockMin,10);
+  const stockWarn = (!isNaN(sMin) && sMin > 0) ? '<span style="color:#dc2626;font-weight:600">⚠ 최소수량 이하면 발주 필요</span>' : '';
+
   let h='<div class="doc-top"><div class="doc-card"><div class="tx">'
-    +'<div class="eyebrow">'+esc(e.cat||"기물")+'</div>'
+    +'<div class="eyebrow">'+esc(e.cat||"기물")+statBadge+'</div>'
     +'<div class="doc-title">'+esc(e.name)+'</div>'
     +(e.intro?'<div class="doc-en">'+esc(e.intro)+'</div>':'')
     +'</div><div class="doc-right"><div class="doc-acts">'
     +'<button class="btn mini" style="background:var(--blue-l)" onclick="openEquipEdit(null)">＋ 새 기물</button>'
     +'<button class="btn mini edit" onclick="openEquipEdit('+viewEquip+')">✏ 편집</button>'
     +'</div></div></div></div><div class="panel">';
-  h+='<div class="blib">기물 라이브러리 \u2014 기물 정보·사용처·세척 기준입니다.</div>';
+  h+='<div class="blib">기물 라이브러리 \u2014 기물 정보·구매·재고·세척 기준입니다.</div>';
   // 사진
   if(e.photo){
     h+='<div style="margin-bottom:14px;text-align:center"><img src="'+esc(e.photo)+'" alt="'+esc(e.name)+'" style="max-width:360px;max-height:280px;border-radius:8px;border:1px solid var(--line);cursor:pointer" onclick="openVideo(\''+String(e.photo).replace(/\\/g,"\\\\").replace(/\'/g,"\\\'")+'\')"></div>';
   }else{
     h+='<div style="margin-bottom:14px;padding:36px;background:var(--soft);border:1px dashed var(--line);border-radius:8px;text-align:center;color:#9ca3af;font-size:13px;cursor:pointer" onclick="uploadToEquipCard()" title="클릭해 사진 업로드">사진 미등록 \u2014 클릭해 사진 업로드</div>';
   }
-  // 메타 그리드
-  const tr=[["분류",e.cat],["용량",e.cap],["재질",e.mat]].filter(function(x){return x[1];});
+  // 메타 그리드 (분류/용량/재질/브랜드)
+  const tr=[["분류",e.cat],["용량",e.cap],["재질",e.mat],["브랜드",e.brand]].filter(function(x){return x[1];});
   if(tr.length){
-    h+='<div class="meta-grid" style="grid-template-columns:repeat(3,1fr)">';
+    h+='<div class="meta-grid" style="grid-template-columns:repeat('+tr.length+',1fr)">';
     tr.forEach(function(x){ h+='<div class="meta-cell"><div class="k">'+x[0]+'</div><div class="v">'+esc(x[1])+'</div></div>'; });
     h+='</div>';
   }
+  // 사용처 (분류별 라벨)
   if(useLines.length && useLines[0]){
-    h+='<div class="blk-t">사용처</div><div class="seq">'+useLines.map(esc).join(" \u00b7 ")+'</div>';
+    h+='<div class="blk-t">'+useLabel+'</div><div class="seq">'+useLines.map(esc).join(" \u00b7 ")+'</div>';
+  }
+  // 구매 / 재고 박스
+  const hasBuy = e.vendor||e.priceUnit||e.priceSet||e.lastBuy;
+  const hasStock = e.stockOk||e.stockMin;
+  if(hasBuy || hasStock){
+    h+='<div class="blk-t">구매 / 재고</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px">';
+    if(e.vendor)    h+='<div class="meta-cell"><div class="k">구매처</div><div class="v">'+esc(e.vendor)+'</div></div>';
+    if(e.priceUnit) h+='<div class="meta-cell"><div class="k">개당 단가</div><div class="v">'+esc(e.priceUnit)+'</div></div>';
+    if(e.priceSet)  h+='<div class="meta-cell"><div class="k">세트 단가</div><div class="v">'+esc(e.priceSet)+'</div></div>';
+    if(e.lastBuy)   h+='<div class="meta-cell"><div class="k">마지막 구매</div><div class="v">'+esc(e.lastBuy)+'</div></div>';
+    if(e.stockOk)   h+='<div class="meta-cell"><div class="k">적정 수량</div><div class="v">'+esc(e.stockOk)+'</div></div>';
+    if(e.stockMin)  h+='<div class="meta-cell"><div class="k">최소 수량</div><div class="v" style="color:#dc2626">'+esc(e.stockMin)+'</div></div>';
+    h+='</div>';
+  }
+  // 구매 이력 (테이블 형태)
+  if(e.buyLog){
+    const logs = lines(e.buyLog);
+    h+='<div class="blk-t">구매 이력</div><table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px"><tr style="background:var(--blue-l);color:var(--blue-d);font-weight:700"><th style="padding:6px 10px;text-align:left;border:1px solid var(--line)">날짜</th><th style="padding:6px 10px;text-align:left;border:1px solid var(--line)">구매처</th><th style="padding:6px 10px;text-align:left;border:1px solid var(--line)">수량</th><th style="padding:6px 10px;text-align:left;border:1px solid var(--line)">금액</th></tr>';
+    logs.forEach(function(ln){
+      const p = ln.split("|").map(function(x){return x.trim();});
+      h+='<tr><td style="padding:6px 10px;border:1px solid var(--line)">'+esc(p[0]||"")+'</td><td style="padding:6px 10px;border:1px solid var(--line)">'+esc(p[1]||"")+'</td><td style="padding:6px 10px;border:1px solid var(--line)">'+esc(p[2]||"")+'</td><td style="padding:6px 10px;border:1px solid var(--line)">'+esc(p[3]||"")+'</td></tr>';
+    });
+    h+='</table>';
+  }
+  // 주의사항 강조 박스
+  if(e.caution && e.caution !== "-"){
+    h+='<div style="margin-bottom:12px;padding:10px 14px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px"><b style="color:#92400e">⚠ 사용 시 주의사항</b><div style="margin-top:4px;font-size:13.5px;color:#78350f">'+nl(e.caution)+'</div></div>';
   }
   if(e.store) h+=field("보관법",e.store);
   if(e.wash)  h+=field("세척법",e.wash);
