@@ -438,7 +438,15 @@ const BEAN_SPEC=[
   ["texture","질감","질감 (음료 질감)",0],["finish","여운","여운 (음료 여운)",0],
   ["tip","추출포인트","추출 포인트",1],["memo","비고","비고",0],
   ["seq","경험시퀀스","경험 시퀀스 (이 원두로 만든 음료의 맛 흐름)",1],
-  ["philosophy","감각철학","감각 철학 (✕/✓ 한 줄에 하나)",1]
+  ["philosophy","감각철학","감각 철학 (✕/✓ 한 줄에 하나)",1],
+  ["dose","도징량","원두별 도징량 (예: 20g)",0],
+  ["yield","추출량","원두별 추출량 (예: 38g)",0],
+  ["exTime","추출시간","원두별 추출시간 (예: 28~32초)",0],
+  ["qcVisual","시각QC","원두별 시각 QC 기준",1],
+  ["qcTaste","맛QC","원두별 맛 QC 기준",1],
+  ["qcFail","실패기준","원두별 실패/재제조 기준 · 실패기준 | 조치",1],
+  ["serveMsg","제공멘트","원두별 추천 제공 멘트",1],
+  ["storage","재료보관","원두별 재료 보관 기준 (예: 디카페인은 무름·과추출 주의)",1]
 ];
 const EQUIP_SPEC=[
   ["name","기물명","기물명",0],["cat","분류","분류 (잔/접시/커트러리/기타)",0],
@@ -761,7 +769,7 @@ function renderMenu(){
     const bm=BEANS.filter(function(b){ return !q||(b.name||"").toLowerCase().indexOf(q)>=0; });
     if(bm.length){
       html+='<div class="cat-group"><div class="cat-head" onclick="this.parentElement.classList.toggle(\'collapsed\')">'
-        +'<span class="arrow">\u25BC</span>\u2615 원두 라이브러리<span class="cat-count">'+bm.length+'</span></div>';
+        +'<span class="arrow">\u25BC</span>원두 라이브러리<span class="cat-count">'+bm.length+'</span></div>';
       BEANS.forEach(function(b,i){
         if(q && (b.name||"").toLowerCase().indexOf(q)<0) return;
         html+='<div class="menu-item'+(viewBean===i?' active':'')+'" onclick="selectBean('+i+')">'
@@ -784,7 +792,7 @@ function renderMenu(){
       });
       const EQ_ORDER=["잔","접시","커트러리","기타"];
       html+='<div class="cat-group"><div class="cat-head" onclick="this.parentElement.classList.toggle(\'collapsed\')">'
-        +'<span class="arrow">\u25BC</span>\uD83C\uDF74 기물 라이브러리<span class="cat-count">'+em.length+'</span></div>';
+        +'<span class="arrow">\u25BC</span>기물 라이브러리<span class="cat-count">'+em.length+'</span></div>';
       // 표준 순서대로 분류 정렬
       Object.keys(eg).sort(function(a,b){
         var x=EQ_ORDER.indexOf(a), y=EQ_ORDER.indexOf(b);
@@ -812,6 +820,14 @@ function setTab(n){ activeTab=n; renderContent(); document.getElementById("conte
 
 function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,
   function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+function fmtPrice(p){
+  if(p===null || p===undefined || p==="") return "";
+  const s = String(p).trim();
+  if(s.indexOf(",") >= 0) return s;
+  return s.replace(/\d+/g, function(n){
+    return parseInt(n,10).toLocaleString("ko-KR");
+  });
+}
 function lines(s){ return (s||"").split(/\n/).map(function(x){return x.trim();}).filter(Boolean); }
 function nl(s){ return esc(s).replace(/\n/g,"<br>"); }
 function ul(s){ let h='<ul class="clean">'; lines(s).forEach(function(x){h+='<li>'+esc(x)+'</li>';}); return h+'</ul>'; }
@@ -827,7 +843,12 @@ function fromBean(o){
     sweet:(o["단맛"]||"").trim(), body:(o["바디"]||"").trim(),
     texture:(o["질감"]||"").trim(), finish:(o["여운"]||"").trim(),
     tip:(o["추출포인트"]||"").trim(), memo:(o["비고"]||"").trim(),
-    seq:(o["경험시퀀스"]||"").trim(), philosophy:(o["감각철학"]||"").trim() };
+    seq:(o["경험시퀀스"]||"").trim(), philosophy:(o["감각철학"]||"").trim(),
+    dose:(o["도징량"]||"").trim(), yield:(o["추출량"]||"").trim(),
+    exTime:(o["추출시간"]||"").trim(),
+    qcVisual:(o["시각QC"]||"").trim(), qcTaste:(o["맛QC"]||"").trim(),
+    qcFail:(o["실패기준"]||"").trim(),
+    serveMsg:(o["제공멘트"]||"").trim(), storage:(o["재료보관"]||"").trim() };
 }
 function toBean(b){
   const o={};
@@ -1105,7 +1126,7 @@ function panel(n,m){
   if(n===1){
     const meta=[["음료명",m.name],["영문명",m.en],["카테고리",m.cat],["온도",m.temp],
       ["시즌",m.season],["판매매장",m.stores],["제조목표시간",m.time],
-      ["사용잔규격",m.cup],["제공방식",m.serve],["가격",m.price]].filter(function(x){return x[1];});
+      ["사용잔규격",m.cup],["제공방식",m.serve],["가격",fmtPrice(m.price)]].filter(function(x){return x[1];});
     if(!meta.length) return "";
     let h='<div class="meta-grid">';
     meta.forEach(function(x){ h+='<div class="meta-cell"><div class="k">'+x[0]+'</div><div class="v">'+esc(x[1])+'</div></div>'; });
@@ -1159,13 +1180,20 @@ function panel(n,m){
     return h;
   }
   if(n===3){
-    const rec=[["사용원두",m.bean],["도징량",m.dose],["추출량",m.yield],
-      ["추출시간",m.exTime],["우유량",m.milk],["시럽량",m.syrup],["얼음량",m.ice]]
+    const ab3 = activeBean ? findBean(activeBean) : null;
+    const _dose   = (ab3 && ab3.dose)   ? ab3.dose   : (m.dose||"");
+    const _yield  = (ab3 && ab3.yield)  ? ab3.yield  : (m.yield||"");
+    const _exTime = (ab3 && ab3.exTime) ? ab3.exTime : (m.exTime||"");
+    const _bean   = activeBean || m.bean || "";
+    const recipeFromBean = ab3 && (ab3.dose||ab3.yield||ab3.exTime);
+    const recLabel = recipeFromBean ? '레시피 — \u2615 '+esc(ab3.name)+' 기준' : '레시피';
+    const rec=[["사용원두",_bean],["도징량",_dose],["추출량",_yield],
+      ["추출시간",_exTime],["우유량",m.milk],["시럽량",m.syrup],["얼음량",m.ice]]
       .filter(function(x){return x[1]&&x[1]!=="-";});
     let h=beanOverlay3();
     if(!h && !(rec.length||m.tolerance)) return "";
     if(rec.length){
-      h+='<table><tr><th>항목</th><th>기준</th></tr>';
+      h+='<div class="blk-t">'+recLabel+'</div><table><tr><th>항목</th><th>기준</th></tr>';
       rec.forEach(function(x){ h+='<tr><td>'+x[0]+'</td><td>'+esc(x[1])+'</td></tr>'; });
       h+='</table>';
     }
@@ -1186,14 +1214,27 @@ function panel(n,m){
     return h+'</div>';
   }
   if(n===5){
-    if(!(m.qcVisual||m.qcTaste||m.qcFail)) return "";
-    return '<div class="qc-grid">'+qcCard("시각 기준",m.qcVisual)
-      +qcCard("맛 기준",m.qcTaste)+failCard("실패 / 재제조",m.qcFail)+'</div>';
+    const ab5 = activeBean ? findBean(activeBean) : null;
+    const _qv = (ab5 && ab5.qcVisual) ? ab5.qcVisual : (m.qcVisual||"");
+    const _qt = (ab5 && ab5.qcTaste)  ? ab5.qcTaste  : (m.qcTaste||"");
+    const _qf = (ab5 && ab5.qcFail)   ? ab5.qcFail   : (m.qcFail||"");
+    if(!(_qv||_qt||_qf)) return "";
+    let head = "";
+    if(ab5 && (ab5.qcVisual||ab5.qcTaste||ab5.qcFail)){
+      head = '<div class="blk-t">QC 기준 — \u2615 '+esc(ab5.name)+' 기준</div>';
+    }
+    return head+'<div class="qc-grid">'+qcCard("시각 기준",_qv)
+      +qcCard("맛 기준",_qt)+failCard("실패 / 재제조",_qf)+'</div>';
   }
   if(n===6){
-    if(!(m.serveMsg||m.checklist||m.faq)) return "";
+    const ab6 = activeBean ? findBean(activeBean) : null;
+    const _sm = (ab6 && ab6.serveMsg) ? ab6.serveMsg : (m.serveMsg||"");
+    if(!(_sm||m.checklist||m.faq)) return "";
     let h="";
-    if(m.serveMsg) h+='<div class="quote">'+nl(m.serveMsg)+'</div>';
+    if(_sm){
+      const smLabel = (ab6 && ab6.serveMsg) ? ' <span style="font-size:11.5px;color:var(--blue);font-weight:600">\u2615 '+esc(ab6.name)+' 기준</span>' : '';
+      h+='<div class="blk-t" style="margin-bottom:6px">제공 멘트'+smLabel+'</div><div class="quote">'+nl(_sm)+'</div>';
+    }
     if(m.checklist) h+='<div class="blk-t">제공 체크리스트</div>'+ul(m.checklist);
     if(m.faq){
       h+='<div class="blk-t">자주 묻는 질문</div><div class="faq">';
@@ -1207,13 +1248,16 @@ function panel(n,m){
     return h;
   }
   if(n===7){
-    if(!(m.priority||m.peak||m.storage)) return "";
+    const ab7 = activeBean ? findBean(activeBean) : null;
+    const _storage = (ab7 && ab7.storage) ? ab7.storage : (m.storage||"");
+    if(!(m.priority||m.peak||_storage)) return "";
     let h="";
     if(m.priority) h+=field("제조 우선순위",m.priority);
     if(m.peak) h+=field("피크타임 기준",m.peak);
-    if(m.storage){
-      h+='<div class="blk-t">재료 보관 기준</div><table><tr><th>재료</th><th>기준</th></tr>';
-      lines(m.storage).forEach(function(ln){
+    if(_storage){
+      const stLabel = (ab7 && ab7.storage) ? '재료 보관 기준 — \u2615 '+esc(ab7.name)+' 기준' : '재료 보관 기준';
+      h+='<div class="blk-t">'+stLabel+'</div><table><tr><th>재료</th><th>기준</th></tr>';
+      lines(_storage).forEach(function(ln){
         const p=ln.split("|").map(function(x){return x.trim();});
         h+='<tr><td>'+esc(p[0]||"")+'</td><td>'+esc(p[1]||"")+'</td></tr>';
       });
@@ -1258,7 +1302,7 @@ function renderContent(){
     +'</div><div class="doc-right">'
     +'<div class="doc-meta">문서번호 <span class="code">'+esc(docNo(m))+'</span></div>'
     +'<div class="doc-meta">버전 <b>'+esc(docVer(m))+'</b> · 작성일 <b>'+esc(docDate(m))+'</b></div>'
-    +(m.price?'<div class="price">₩ '+esc(m.price)+'</div>':'')
+    +(m.price?'<div class="price">₩ '+esc(fmtPrice(m.price))+'</div>':'')
     +'<div class="doc-acts">'
     +'<button class="btn mini edit" onclick="openEdit('+current+')">✏ 편집</button>'
     +'</div></div></div>';
@@ -1381,5 +1425,4 @@ function toast(msg){
 
 loadData();
 </script>
-</body>
-</html>
+</body
