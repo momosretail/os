@@ -42,14 +42,24 @@
   .btn.add:hover{background:var(--blue-d)}
   .menu-scroll{overflow-y:auto;flex:1;padding:0 8px 16px}
   .cat-group{margin-bottom:6px}
-  .cat-head{display:flex;align-items:center;gap:6px;padding:9px 10px;cursor:pointer;
-    font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;
+  .cat-head{display:flex;align-items:center;gap:8px;padding:11px 10px;cursor:pointer;
+    font-size:18px;font-weight:700;color:var(--blue);text-transform:uppercase;
     letter-spacing:.5px;user-select:none}
-  .cat-head .arrow{transition:.2s;font-size:10px}
+  .cat-head .arrow{transition:.2s;font-size:13px}
   .cat-group.collapsed .arrow{transform:rotate(-90deg)}
-  .cat-group.collapsed .menu-item{display:none}
+  .cat-group.collapsed .menu-item, .cat-group.collapsed .sub-group{display:none}
   .cat-count{margin-left:auto;background:var(--blue-l2);color:var(--blue-d);
-    border-radius:10px;padding:1px 8px;font-size:11px}
+    border-radius:10px;padding:2px 9px;font-size:12px}
+  /* 기물 라이브러리 sub-group (잔/접시/커트러리/기타) */
+  .sub-group{margin-bottom:2px}
+  .sub-head{display:flex;align-items:center;gap:6px;padding:6px 10px 6px 22px;cursor:pointer;
+    font-size:13px;font-weight:700;color:#4b5563;user-select:none}
+  .sub-head:hover{background:var(--blue-l)}
+  .sub-head .arrow{transition:.2s;font-size:10px}
+  .sub-group.collapsed .sub-head .arrow{transform:rotate(-90deg)}
+  .sub-group.collapsed .menu-item{display:none}
+  .sub-count{margin-left:auto;background:#e5e7eb;color:#4b5563;
+    border-radius:9px;padding:1px 7px;font-size:11px}
   .menu-item{padding:8px 12px 8px 16px;font-size:13.5px;cursor:pointer;border-radius:7px;
     color:var(--ink);display:flex;align-items:center;gap:8px}
   .menu-item:hover{background:var(--blue-l)}
@@ -444,7 +454,7 @@ const EQUIP_LIB=[
   {name:"라떼잔",cat:"잔",photo:"",intro:"우유 음료용 폭이 넓은 잔",cap:"240ml",mat:"자기",use:"라떼\n카푸치노\n시그니처(HOT)",store:"손잡이 보호 적층 보관",wash:"우유 잔여물 즉시 세척",memo:"전 매장 사용"},
   {name:"아이스 글라스",cat:"잔",photo:"",intro:"두꺼운 바닥의 ICE 음료용 잔",cap:"360ml",mat:"유리",use:"아이스 아메리카노\n아이스 라떼\n콜드브루",store:"깨짐 주의 별도 보관",wash:"식기세척기 가능",memo:"전 매장 사용"},
   {name:"에스프레소 스푼",cat:"커트러리",photo:"",intro:"작은 사이즈 디저트·에스프레소용 스푼",cap:"-",mat:"스테인리스",use:"에스프레소\n시그니처",store:"별도 트레이 보관",wash:"일반 세척",memo:"전 매장 사용"},
-  {name:"커피 소서(받침)",cat:"받침·트레이",photo:"",intro:"컵 받침 접시",cap:"직경 14cm",mat:"자기",use:"아메리카노\n라떼\n커피류",store:"잔과 별도 보관",wash:"일반 세척",memo:"본점·마린시티 보유"}
+  {name:"커피 소서(받침)",cat:"접시",photo:"",intro:"컵 받침 접시",cap:"직경 14cm",mat:"자기",use:"아메리카노\n라떼\n커피류",store:"잔과 별도 보관",wash:"일반 세척",memo:"본점·마린시티 보유"}
 ];
 function buildFallback(){
   const list=[Object.assign({},ESPRESSO)];
@@ -759,18 +769,28 @@ function renderMenu(){
       // 분류별 그룹화
       const eg={};
       em.forEach(function(e){
-        const c=e.cat||"기타";
+        // 분류 표준화: 받침·트레이 → 접시, 디저트도구 → 기타
+        let c=e.cat||"기타";
+        if(c==="받침·트레이" || c==="받침" || c==="트레이") c="접시";
+        if(c==="디저트도구") c="기타";
         (eg[c]=eg[c]||[]).push(e);
       });
+      const EQ_ORDER=["잔","접시","커트러리","기타"];
       html+='<div class="cat-group"><div class="cat-head" onclick="this.parentElement.classList.toggle(\'collapsed\')">'
         +'<span class="arrow">\u25BC</span>\uD83C\uDF74 기물 라이브러리<span class="cat-count">'+em.length+'</span></div>';
-      Object.keys(eg).forEach(function(c){
-        html+='<div style="padding:4px 12px 2px;font-size:11px;color:#6b7280;font-weight:700">'+esc(c)+'</div>';
+      // 표준 순서대로 분류 정렬
+      Object.keys(eg).sort(function(a,b){
+        var x=EQ_ORDER.indexOf(a), y=EQ_ORDER.indexOf(b);
+        return (x<0?99:x)-(y<0?99:y);
+      }).forEach(function(c){
+        html+='<div class="sub-group"><div class="sub-head" onclick="event.stopPropagation();this.parentElement.classList.toggle(\'collapsed\')">'
+          +'<span class="arrow">\u25BC</span>'+esc(c)+'<span class="sub-count">'+eg[c].length+'</span></div>';
         eg[c].forEach(function(e){
           const gi=EQUIPS.indexOf(e);
           html+='<div class="menu-item'+(viewEquip===gi?' active':'')+'" onclick="selectEquip('+gi+')">'
             +'<span>'+esc(e.name)+'</span></div>';
         });
+        html+='</div>';
       });
       html+='</div>';
     }
